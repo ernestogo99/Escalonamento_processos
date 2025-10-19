@@ -1,7 +1,8 @@
-from typing import List, Dict
-from ..schemas import ProcessSchema
+from typing import List
 
-def fcfs(ready: List[ProcessSchema],*_args) -> Dict:
+from ..models import Process
+
+def fcfs(ready: List[Process],*_args) -> Process:
     if not  ready:
         return None
     
