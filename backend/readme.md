@@ -32,21 +32,21 @@
 BACKEND/
 ├── manage.py
 ├── core/ -- Arquivo principal do Django
-│ ├── **init**.py
+│ ├── init.py
 │ ├── api.py -- Arquivo principal para chamar a api do django ninja
 │ ├── asgi.py
 │ ├── settings.py
 │ ├── urls.py -- Arquivo para configurar Rotas
 │ ├── wsgi.py
 ├── task_scheduling/
-│ ├── **init**.py
+│ ├── init.py
 │ ├── admin.py
 │ ├── apps.py
 │ ├── api.py -- Arquivo onde faremos a lógica e os endpoints
 │ ├── models.py (Opcional - modelo para garantir persistência e enviar ao banco de dados)
 │ ├── schemas.py (Montar os schemas dos algoritmos e tipar)
 │ ├── algorithms/
-│ │ ├── **init**.py
+│ │ ├── init.py
 │ │ ├── fcfs.py
 │ │ ├── sjf.py
 │ │ ├── srtf.py
