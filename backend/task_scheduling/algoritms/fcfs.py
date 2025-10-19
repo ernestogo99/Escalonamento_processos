@@ -1,8 +1,8 @@
-from typing import List
+from typing import List,Optional
 
 from ..models import Process
 
-def fcfs(ready: List[Process],*_args) -> Process:
+def fcfs(ready:List[Process],time:int,prev_proc_id:Optional[str])->Optional[Process]:
     if not  ready:
         return None
     

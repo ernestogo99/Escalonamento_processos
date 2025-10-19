@@ -5,6 +5,7 @@ from .services import run_simulation
 from .algoritms.fcfs import fcfs
 from .algoritms.shortest_job_first import sjf
 from .algoritms.shortest_remaining_time_first import srtf
+from .algoritms.priority import priority_non_preemptive,priority_preemptive
 from ninja.errors import HttpError
 
 task_scheduling_router=Router(tags=['Escalonamento de tarefas'])
@@ -35,7 +36,10 @@ def schedule_task(request,data:SimulationInSchema):
     ALGORITHMS = {
     'fcfs': fcfs,
     'sjf': sjf,
-    'srtf': srtf
+    'srtf': srtf,
+    'pnp':priority_non_preemptive,
+    'pp':priority_preemptive
+    
 }
     algorithm_func = ALGORITHMS.get(data.algorithm.lower())
 
