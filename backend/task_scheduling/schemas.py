@@ -6,6 +6,7 @@ class ProcessSchema(Schema):
     arrival:int
     duration:int
     priority:int
+  
 
 
 class SimulationInSchema(Schema):
