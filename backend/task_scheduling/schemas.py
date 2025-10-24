@@ -1,17 +1,20 @@
 from ninja import Schema
-from typing import List, Dict
+from typing import List, Dict,Optional
 
 class ProcessSchema(Schema):
     id:str
     arrival:int
     duration:int
     priority:int
+
   
 
 
 class SimulationInSchema(Schema):
     algorithm:str
     processes:List[ProcessSchema]
+    quantum:Optional[int] =None
+    aging:Optional[int] = None
 
 class TimelineEntrySchema(Schema):
     time:str

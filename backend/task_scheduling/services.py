@@ -4,17 +4,26 @@ from .models import Process
 from .schemas import ResultSchema, TimelineEntrySchema
 
 
+
+
 def run_simulation(
     processes: List[Process],
-    select_next: Callable[[List[Process], int, Optional[str]], Optional[Process]]
+    algorithm: Callable[[List[Process], int, Optional[str]], Optional[Process]],
+    quantum:Optional[int]=None,
+    algoritm_name: Optional[str] = None,
+    aging:Optional[int]=None
 ) -> ResultSchema:
     """
     Simula o escalonamento de processos com base no algoritmo fornecido.
 
     :param processes: Lista de processos (classe interna Process)
-    :param select_next: Função que escolhe o próximo processo a executar
+    :param algorithm: Função que escolhe o próximo processo a executar
+    :param quantum: Quantum usado em RR (opcional)
+    :param algoritm_name: Nome do algoritmo, ex: 'fcfs', 'rr', 'rr_priority_aging'
+    :param aging: Parâmetro de envelhecimento (opcional)
     :return: ResultSchema com estatísticas e timeline
     """
+  
     time = 0
     finished = []
     context_switches = 0
@@ -29,8 +38,14 @@ def run_simulation(
       
         ready = [p for p in processes if p.arrival <= time and p.remaining > 0]
 
-      
-        current = select_next(ready, time, prev_proc_id)
+        if algoritm_name == 'rr':
+            current=algorithm(ready,time,prev_proc_id,quantum)
+        
+        elif algoritm_name =='rr_priority_aging':
+            current=algorithm(ready,time,prev_proc_id,quantum,aging)
+        else:
+            current = algorithm(ready, time, prev_proc_id)
+        
 
       
         state = {p.id: "--" for p in processes}
