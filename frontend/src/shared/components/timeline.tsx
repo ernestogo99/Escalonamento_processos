@@ -105,7 +105,6 @@ export const TimelineDialog = ({
           })}
         </Box>
 
-        {/* Estatísticas */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
