@@ -10,15 +10,22 @@ import {
   Select,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
-import { useState } from "react";
-import type { Iprocess } from "../../shared/interfaces/process";
-import { CustomTextField } from "../../shared/components";
+import React, { useState } from "react";
+import {
+  type Iresult,
+  type Iprocess,
+  type Isimulation,
+} from "../../shared/interfaces/process";
+import { CustomTextField, TimelineDialog } from "../../shared/components";
+import { scheduleService } from "../../shared/services";
 
 export const Scheduler = () => {
   const [algorithm, setAlgorithm] = useState<string>("fcfs");
   const [processes, setProcesses] = useState<Iprocess[]>([]);
-  const [quantum, setQuantum] = useState<Number>();
-  const [aging, setAging] = useState<Number>();
+  const [quantum, setQuantum] = useState<number>();
+  const [aging, setAging] = useState<number>();
+  const [result, setResult] = useState<Iresult>();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const handleAlgorithmChange = (event: SelectChangeEvent) => {
     setAlgorithm(event.target.value as string);
@@ -28,7 +35,7 @@ export const Scheduler = () => {
     const newProcess: Iprocess = {
       id: `P${processes.length + 1}`,
       arrival: 0,
-      duration: 1,
+      duration: 0,
       priority: 1,
     };
     setProcesses([...processes, newProcess]);
@@ -49,12 +56,29 @@ export const Scheduler = () => {
     setProcesses(updated);
   };
 
-  const handleStartSimulation = () => {
+  const handleStartSimulation = (e: React.FormEvent) => {
+    e.preventDefault();
     console.log({ algorithm, processes });
+    const simulation: Isimulation = {
+      algorithm: algorithm,
+      processes: processes,
+      quantum: quantum!,
+      aging: aging!,
+    };
+
+    scheduleService.scheduleTask(simulation).then((response) => {
+      if (response instanceof Error) {
+        console.error(response.message);
+      } else {
+        setResult(response);
+        setOpenDialog(true);
+      }
+    });
   };
 
   return (
     <Box
+      component="form"
       sx={{
         backgroundColor: "#2b2d42",
         color: "#fff",
@@ -143,7 +167,7 @@ export const Scheduler = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <CustomTextField label="Id" value={p.id} size="small" disabled />
+            <CustomTextField label="Id" value={p.id} size="small" />
             <CustomTextField
               label="Arrival"
               type="number"
@@ -198,6 +222,7 @@ export const Scheduler = () => {
 
         <Button
           variant="contained"
+          type="submit"
           fullWidth
           sx={{ mt: 2, bgcolor: "#ff69b4", color: "#000", fontWeight: "bold" }}
           onClick={handleStartSimulation}
@@ -205,6 +230,12 @@ export const Scheduler = () => {
           START SIMULATION
         </Button>
       </Stack>
+
+      <TimelineDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        result={result!}
+      />
     </Box>
   );
 };

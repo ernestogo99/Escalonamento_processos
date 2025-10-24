@@ -10,6 +10,8 @@ export interface Iprocess {
 export interface Isimulation {
   algorithm: string;
   processes: Iprocess[];
+  quantum?: number;
+  aging?: number;
 }
 
 export interface ItimelineEntry {
