@@ -2,7 +2,7 @@
 from typing import List, Callable, Optional
 from .models import Process
 from .schemas import ResultSchema, TimelineEntrySchema
-
+from .algoritms.round_robin import rr_queue
 
 
 
@@ -58,11 +58,22 @@ def run_simulation(
             if current.start is None:
                 current.start = time
 
+            if algoritm_name == "rr" or algoritm_name == 'rr_priority_aging':
+                if not hasattr(current, "_slice"):
+                    current._slice = 0
+                current._slice += 1
+
+ 
+                if current.remaining == 0 or current._slice >= quantum:
+                    current._slice = 0
+                    rr_queue.rotate(-1)
+
        
             if current.remaining == 0:
                 current.finish = time + 1
                 finished.append(current)
 
+              
        
             if prev_proc_id and prev_proc_id != current.id:
                 context_switches += 1

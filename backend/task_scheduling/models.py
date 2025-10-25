@@ -11,3 +11,7 @@ class Process:
         self.remaining = duration
         self.start = None
         self.finish = None
+    
+    def __str__(self):
+        return self.id
+    

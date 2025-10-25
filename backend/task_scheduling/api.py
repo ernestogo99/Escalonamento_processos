@@ -1,5 +1,5 @@
 from ninja import Router
-from .schemas import ProcessSchema,ResultSchema,SimulationInSchema
+from .schemas import ResultSchema,SimulationInSchema
 from .models import Process
 from .services import run_simulation
 from .algoritms.fcfs import fcfs
@@ -7,28 +7,9 @@ from .algoritms.shortest_job_first import sjf
 from .algoritms.shortest_remaining_time_first import srtf
 from .algoritms.priority import priority_non_preemptive,priority_preemptive
 from .algoritms.round_robin import round_robin,round_robin_priority_aging
-from .config import load_config
 from ninja.errors import HttpError
 
 task_scheduling_router=Router(tags=['Escalonamento de tarefas'])
-
-
-
-@task_scheduling_router.post('/',response={200:ProcessSchema})
-def create_process(request,process:ProcessSchema):
-    """Endpoint de demonstração do django ninja para os divos"""
-    return process
-
-
-@task_scheduling_router.get('/',response={200:dict})
-def teste(request):
-    """Teste"""
-    dict={
-        'id':1,
-        'teste':'testando'
-    }
-    return dict
-
 
 @task_scheduling_router.post('/schedule',response={200:ResultSchema,403:dict})
 def schedule_task(request,data:SimulationInSchema):
