@@ -58,7 +58,7 @@ def run_simulation(
             if current.start is None:
                 current.start = time
 
-            if algoritm_name == "rr" or algoritm_name == 'rr_priority_aging':
+            if algoritm_name == "rr":
                 if not hasattr(current, "_slice"):
                     current._slice = 0
                 current._slice += 1
@@ -67,8 +67,20 @@ def run_simulation(
                 if current.remaining == 0 or current._slice >= quantum:
                     current._slice = 0
                     rr_queue.rotate(-1)
+            elif algoritm_name == "rr_priority_aging":
+                if not hasattr(current, "_slice"):
+                    current._slice = 0
+                current._slice += 1
 
-       
+                for p in list(rr_queue)[1:]:
+                    if p.remaining > 0:
+                        p.priority += aging
+
+         
+                if current.remaining == 0 or current._slice >= quantum:
+                    current._slice = 0
+                    rr_queue.rotate(-1)
+          
             if current.remaining == 0:
                 current.finish = time + 1
                 finished.append(current)

@@ -59,23 +59,16 @@ def round_robin(ready: List[Process], time: int, prev_proc_id: Optional[str], qu
 
 
 
-
-
-
-
-def round_robin_priority_aging(
-    ready: List[Process],
-    time: int,
-    prev_proc_id: Optional[str],
-    quantum: int,
-    aging: int
-) -> Optional[Process]:
+def round_robin_priority_aging(ready: List[Process]                               
+, time: int
+, prev_proc_id: Optional[str]
+,quantum: int
+, aging: int) -> Optional[Process]:
     """
-    Round-Robin com prioridade e envelhecimento (aging), usando a mesma fila rr_queue do RR.
+    Round-Robin com prioridade e envelhecimento (aging)
 
-    Esta função mantém a fila de processos prontos e aplica envelhecimento a cada quantum. 
-    Não decrementa `remaining` nem incrementa `_slice` (feito pelo run_simulation).
-
+   
+   
     :param ready: Lista de processos prontos que chegaram até o tempo atual.
     :param time: Tempo atual da simulação.
     :param prev_proc_id: ID do processo que estava rodando no tick anterior (pode ser None).
@@ -84,33 +77,15 @@ def round_robin_priority_aging(
     :return: O próximo processo a executar ou None se nenhum processo estiver pronto.
     """
     global rr_queue
-
-    # Adiciona novos processos que ainda não estão na fila
+  
     for p in ready:
         if p not in rr_queue and p.remaining > 0:
             rr_queue.append(p)
 
+    while rr_queue and rr_queue[0].remaining <= 0:
+        rr_queue.popleft()
     if not rr_queue:
         return None
 
-    current = rr_queue[0]
-
-    # Remove processos já terminados
-    if current.remaining == 0:
-        rr_queue.popleft()
-        return round_robin_priority_aging(ready, time, prev_proc_id, quantum, aging)
-
-    # Inicializa o contador de quantum se não existir
-    if not hasattr(current, "_slice"):
-        current._slice = 0
-
-    # Aplica envelhecimento nos demais processos na fila
-    for p in list(rr_queue)[1:]:
-        if p.remaining > 0:
-            p.priority += aging
-
-    # Se houve troca de processo, rotaciona a fila
-    if prev_proc_id and prev_proc_id != current.id:
-        rr_queue.rotate(-1)
-
+    rr_queue = deque(sorted(rr_queue, key=lambda x: (x.priority, x.arrival)))
     return rr_queue[0]
